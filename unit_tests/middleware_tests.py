@@ -22,7 +22,7 @@ def middleware_inserts_script_tags_in_returned_data():
 
 @istest
 def middleware_forwards_appropriate_requests_to_resources():
-    test_resources = [('^(?P<name>\w+)?', GreeterResource())]
+    test_resources = [('^(?P<name>\w+)?', UrlBasedGreeterResource())]
 
     middleware = create_middleware(test_resources)
 
@@ -32,17 +32,34 @@ def middleware_forwards_appropriate_requests_to_resources():
     named_response = output_from_application(middleware, '/glimpse/Nik')
     assert_equal(named_response, 'Hello, Nik!')
 
-class GreeterResource(object):
+class UrlBasedGreeterResource(object):
     def get_headers(self):
-        return [('Content-Type', 'text/plain')]
+        return [('content-type', 'text/plain')]
 
     def handle(self, name='World'):
         return 'Hello, {0}!'.format(name)
 
+@istest
+def middleware_passes_query_data_to_resources():
+    test_resources = [('^$', QueryBasedGreeterResource())]
+
+    middleware = create_middleware(test_resources)
+
+    response = output_from_application(middleware, '/glimpse/?name=Nik')
+    assert_equal(response, 'Hello, Nik!')
+
+class QueryBasedGreeterResource(object):
+    def get_headers(self):
+        return [('content-type', 'text/plain')]
+
+    def handle(self):
+        return 'Hello, {0}!'.format(self.query_data['name'])
+
+
 def create_application():
     def application(environ, start_response):
         start_response('200 OK', [('Content-type', 'text/html')])
-        return ['<html><body></body></html>'] #TODO
+        return ['<html><body></body></html>']
 
     return application
 
