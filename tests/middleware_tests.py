@@ -1,7 +1,6 @@
 from cStringIO import StringIO
 
 from nose.tools import istest, assert_equal
-from mock import MagicMock
 
 import glimpse.middleware
 from glimpse.middleware import Middleware
@@ -24,15 +23,18 @@ def middleware_inserts_script_tags_in_returned_data():
 @istest
 def middleware_forwards_appropriate_requests_to_resources():
     test_resource = [('^(?P<name>\w+)?', GreeterResource())]
+    inital_resources = glimpse.middleware._resources
     glimpse.middleware._resources = test_resource
+
     middleware = create_middleware()
-    #middleware._resource = MagicMock(side_effect=print_something, return_value=test_resource)
 
     default_response = output_from_application(middleware, '/glimpse')
     assert_equal(default_response, 'Hello, World!')
 
     named_response = output_from_application(middleware, '/glimpse/Nik')
     assert_equal(named_response, 'Hello, Nik!')
+
+    glimpse.middleware._resources = initial_resources
 
 def print_something():
     print 'Mock called'
