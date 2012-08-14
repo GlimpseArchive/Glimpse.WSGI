@@ -22,22 +22,15 @@ def middleware_inserts_script_tags_in_returned_data():
 
 @istest
 def middleware_forwards_appropriate_requests_to_resources():
-    test_resource = [('^(?P<name>\w+)?', GreeterResource())]
-    inital_resources = glimpse.middleware._resources
-    glimpse.middleware._resources = test_resource
+    test_resources = [('^(?P<name>\w+)?', GreeterResource())]
 
-    middleware = create_middleware()
+    middleware = create_middleware(test_resources)
 
     default_response = output_from_application(middleware, '/glimpse')
     assert_equal(default_response, 'Hello, World!')
 
     named_response = output_from_application(middleware, '/glimpse/Nik')
     assert_equal(named_response, 'Hello, Nik!')
-
-    glimpse.middleware._resources = initial_resources
-
-def print_something():
-    print 'Mock called'
 
 class GreeterResource(object):
     def get_headers(self):
@@ -53,8 +46,11 @@ def create_application():
 
     return application
 
-def create_middleware():
-    return Middleware(create_application())
+def create_middleware(resources=None):
+    middleware = Middleware(create_application())
+    if resources is not None:
+        middleware._resources = resources
+    return middleware
 
 def output_from_application(application, request_path='/'):
     output = StringIO()

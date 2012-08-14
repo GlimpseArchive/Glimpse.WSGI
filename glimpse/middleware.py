@@ -3,9 +3,10 @@ import re
 from configuration import Configuration
 from staticresource import StaticResource
 
-_resources = (('^logo', StaticResource('logo.png')),)
 
 class Middleware(object):
+    _resources = (('^logo', StaticResource('logo.png')),)
+
     def __init__(self, application):
         self._application = application
         self._config = Configuration()
@@ -33,7 +34,7 @@ class Middleware(object):
     def _execute_resource(self, environ, start_response):
         resource_url = environ['PATH_INFO'][len('/glimpse'):].lstrip('/')
 
-        for url_pattern, resource in _resources:
+        for url_pattern, resource in self._resources:
             matching = re.match(url_pattern, resource_url)
             if matching is not None:
                 start_response('200 OK', resource.get_headers())
