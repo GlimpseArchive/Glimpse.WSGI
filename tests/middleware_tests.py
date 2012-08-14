@@ -1,7 +1,9 @@
 from cStringIO import StringIO
 
 from nose.tools import istest, assert_equal
+from mock import MagicMock
 
+import glimpse.middleware
 from glimpse.middleware import Middleware
 from glimpse.configuration import Configuration
 
@@ -12,14 +14,36 @@ def wsgi_test_environment_behaves_correctly():
     assert_equal('<html><body></body></html>', data)
 
 @istest
-def middleware_insterts_script_tags_in_returned_data():
-    application = create_application()
-    middleware = Middleware(application)
+def middleware_inserts_script_tags_in_returned_data():
+    middleware = create_middleware()
     response = output_from_application(middleware)
     script_tags = Configuration().generate_script_tags()
     expected = '<html><body>{0}</body></html>'.format(script_tags)
     assert_equal(expected, response)
-    
+
+@istest
+def middleware_forwards_appropriate_requests_to_resources():
+    test_resource = [('^(?P<name>\w+)?', GreeterResource())]
+    glimpse.middleware._resources = test_resource
+    middleware = create_middleware()
+    #middleware._resource = MagicMock(side_effect=print_something, return_value=test_resource)
+
+    default_response = output_from_application(middleware, '/glimpse')
+    assert_equal(default_response, 'Hello, World!')
+
+    named_response = output_from_application(middleware, '/glimpse/Nik')
+    assert_equal(named_response, 'Hello, Nik!')
+
+def print_something():
+    print 'Mock called'
+
+class GreeterResource(object):
+    def get_headers(self):
+        return [('Content-Type', 'text/plain')]
+
+    def handle(self, name='World'):
+        return 'Hello, {0}!'.format(name)
+
 def create_application():
     def application(environ, start_response):
         start_response('200 OK', [('Content-type', 'text/html')])
@@ -27,13 +51,22 @@ def create_application():
 
     return application
 
-def output_from_application(application):
+def create_middleware():
+    return Middleware(create_application())
+
+def output_from_application(application, request_path='/'):
     output = StringIO()
+
+    environ = {}
+    request_parts = request_path.split('?')
+    environ['PATH_INFO'] = request_parts[0]
+    if len(request_parts) > 1:
+        environ['QUERY_STRING'] = request_parts[1]
 
     def start_response(status, response_headers, exc_info=None):
         return output.write
 
-    data = application([], start_response)
+    data = application(environ, start_response)
     
     for item in data:
         output.write(item)
