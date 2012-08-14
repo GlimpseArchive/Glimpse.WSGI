@@ -24,22 +24,28 @@ class Middleware(object):
     def __call__(self, environ, start_response):
         if environ['PATH_INFO'].startswith('/glimpse'):
             return self._execute_resource(environ, start_response)
-        # elif self.inject_client(environ):
+        else:
+            return self._hook_into_application(environ, start_response)
 
-        def filter_data(data):
-            body_with_script = self._config.generate_script_tags() + '</body>'
-            return data.replace('</body>', body_with_script)
-
+    def _hook_into_application(self, environ, start_response):
         def start_glimpse_response(status, response_headers, exc_info=None):
+            lowered_headers = [(key.lower(), value.lower()) 
+                               for key, value in response_headers]
             write = start_response(status, response_headers, exc_info)
 
-            def glimpse_write(data):
-                write(filter_data(data))
+            if ('content-type', 'text/html') in lowered_headers:
+                middleware_write = lambda data: write(self._filter_data(data))
+            else:
+                middleware_write = write
 
-            return glimpse_write
+            return middleware_write
         
         data = self._application(environ, start_glimpse_response)
-        return (filter_data(item) for item in data)
+        return (self._filter_data(item) for item in data)
+
+    def _filter_data(self, data):
+        body_with_script = self._config.generate_script_tags() + '</body>'
+        return data.replace('</body>', body_with_script)
 
     def _execute_resource(self, environ, start_response):
         resource_url = environ['PATH_INFO'][len('/glimpse'):].lstrip('/')

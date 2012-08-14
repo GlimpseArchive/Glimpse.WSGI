@@ -1,3 +1,3 @@
 class Configuration(object):
     def generate_script_tags(self):
-        return '<script type="text/javascript" src=""></script>'
+        return '<script type="text/javascript" src="/glimpse/client.js"></script>'
