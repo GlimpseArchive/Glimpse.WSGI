@@ -3,13 +3,19 @@ import re
 from configuration import Configuration
 from staticresource import StaticResource
 
+from os.path import dirname
+
+def _resource(file_name):
+    path = '{0}/../static_files/{1}'.format(dirname(__file__), file_name)
+    return StaticResource(path)
 
 class Middleware(object):
     _resources = [
-        ('^logo\.png', StaticResource('../static_files/logo.png')),
-        ('^sprite\.png', StaticResource('../static_files/sprite.png')),
-        ('^glimpse\.js', StaticResource('../static_files/glimpse.js'))
+        ('^logo\.png', _resource('logo.png')),
+        ('^sprite\.png', _resource('sprite.png')),
+        ('^glimpse\.js', _resource('glimpse.js'))
     ]
+    _default_resource = _resource('404.txt')
 
     def __init__(self, application):
         self._application = application
@@ -45,7 +51,11 @@ class Middleware(object):
                 matched_arguments = {key: value for key, value 
                                      in matching.groupdict().iteritems()
                                      if value is not None}
-                yield resource.handle(**matched_arguments)
+                return [resource.handle(**matched_arguments)]
+
+        start_response('404 No matching resource',
+                       self._default_resource.get_headers())
+        return [self._default_resource.handle()]
 
 def wrap_application(wsgi_application):
     return Middleware(wsgi_application)
