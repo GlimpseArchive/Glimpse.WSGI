@@ -5,7 +5,10 @@ from staticresource import StaticResource
 
 
 class Middleware(object):
-    _resources = (('^logo', StaticResource('logo.png')),)
+    _resources = [
+        ('^logo\.png', StaticResource('logo.png')),
+        ('^sprite\.png', StaticResource('sprite.png'))
+    ]
 
     def __init__(self, application):
         self._application = application

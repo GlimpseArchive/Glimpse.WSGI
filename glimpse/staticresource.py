@@ -5,3 +5,7 @@ class StaticResource(object):
     def handle(self):
         with open(self._file_name) as resource_file:
             return resource_file.read()
+
+    def get_headers(self):
+
+        pass
