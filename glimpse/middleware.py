@@ -4,6 +4,7 @@ from configuration import Configuration
 from staticresource import StaticResource
 
 from os.path import dirname
+from glimpse import log
 
 def _resource(file_name):
     path = '{0}/../static_files/{1}'.format(dirname(__file__), file_name)
@@ -18,6 +19,7 @@ class Middleware(object):
     _default_resource = _resource('404.txt')
 
     def __init__(self, application):
+        log.info('Loading Glimpse middleware')
         self._application = application
         self._config = Configuration()
 
@@ -28,6 +30,7 @@ class Middleware(object):
             return self._hook_into_application(environ, start_response)
 
     def _hook_into_application(self, environ, start_response):
+        log.info('Passing request to application')
         def start_glimpse_response(status, response_headers, exc_info=None):
             lowered_headers = [(key.lower(), value.lower()) 
                                for key, value in response_headers]
@@ -49,6 +52,7 @@ class Middleware(object):
 
     def _execute_resource(self, environ, start_response):
         resource_url = environ['PATH_INFO'][len('/glimpse'):].lstrip('/')
+        log.info('Got a request for {0}'.format(resource_url))
 
         for url_pattern, resource in self._resources:
             matching = re.match(url_pattern, resource_url)
