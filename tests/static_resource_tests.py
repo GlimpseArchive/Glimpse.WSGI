@@ -1,4 +1,4 @@
-from nose.tools import istest, assert_equal
+from nose.tools import istest, assert_equal, assert_in, assert_raises
 
 from glimpse.staticresource import StaticResource
 
@@ -13,7 +13,13 @@ def handling_static_resources_returns_contents_of_file():
 @istest
 def detected_content_type_matches_file_type():
     test_file_name = 'test.png'
-    expected = 'image/png'
+    expected = ('content-type', 'image/png')
     resource = StaticResource(test_file_name)
-    content_type = resource.get_headers()['content-type']
-    assert_equal(expected, content_type)
+    headers = resource.get_headers()
+    assert_in(expected, headers)
+
+@istest
+def handler_throws_error_when_mimetype_is_unclear():
+    test_file_name = 'test'
+    with assert_raises(ValueError):
+        resource = StaticResource(test_file_name)
