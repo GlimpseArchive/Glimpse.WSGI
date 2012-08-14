@@ -36,7 +36,7 @@ class UrlBasedGreeterResource(object):
     def get_headers(self):
         return [('content-type', 'text/plain')]
 
-    def handle(self, name='World'):
+    def handle(self, request, name='World'):
         return 'Hello, {0}!'.format(name)
 
 @istest
@@ -52,8 +52,8 @@ class QueryBasedGreeterResource(object):
     def get_headers(self):
         return [('content-type', 'text/plain')]
 
-    def handle(self):
-        return 'Hello, {0}!'.format(self.query_data['name'])
+    def handle(self, request):
+        return 'Hello, {0}!'.format(request.query_data['name'])
 
 
 def create_application():
