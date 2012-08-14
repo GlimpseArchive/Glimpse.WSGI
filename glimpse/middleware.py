@@ -6,8 +6,9 @@ from staticresource import StaticResource
 
 class Middleware(object):
     _resources = [
-        ('^logo\.png', StaticResource('logo.png')),
-        ('^sprite\.png', StaticResource('sprite.png'))
+        ('^logo\.png', StaticResource('../static_files/logo.png')),
+        ('^sprite\.png', StaticResource('../static_files/sprite.png')),
+        ('^glimpse\.js', StaticResource('../static_files/glimpse.js'))
     ]
 
     def __init__(self, application):
