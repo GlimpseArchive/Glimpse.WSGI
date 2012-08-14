@@ -10,7 +10,7 @@ sys.path.insert(0, dirname(__file__) + '/djangotestapplication')
 
 from testsite.wsgi import application
 
-PORT = 8000
+PORT = 8001
 
 class ApplicationServerThread(Thread):
     def __init__(self, *args, **kwargs):
