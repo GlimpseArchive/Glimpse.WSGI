@@ -50,4 +50,3 @@ def middleware_passes_query_data_to_resources():
 
     response = output_from_application(middleware, '/glimpse/?name=Nik')
     assert_equal(response, 'Hello, Nik!')
-

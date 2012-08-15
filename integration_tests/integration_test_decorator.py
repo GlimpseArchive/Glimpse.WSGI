@@ -1,4 +1,5 @@
 from threading import Thread
+from time import sleep
 from wsgiref.simple_server import make_server
 from functools import wraps
 from os.path import dirname
@@ -22,6 +23,8 @@ class ApplicationServerThread(Thread):
 
     def stop(self):
         self._server.shutdown()
+        sleep(0.000001) #TODO: Otherwise run_tests.sh says address in use.
+        # I don't know why this is. It should probably be fixed.
 
 def test(function):
     function = istest(function)
