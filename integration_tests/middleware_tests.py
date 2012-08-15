@@ -1,47 +1,19 @@
-from threading import Thread
-from wsgiref.simple_server import make_server
-from functools import wraps
 from os.path import dirname
 
-from nose.tools import istest
+import requests
+from nose.tools import assert_equal
 
-import sys
-sys.path.insert(0, dirname(__file__) + '/djangotestapplication')
-
-from testsite.wsgi import application
-
-PORT = 8000
-
-class ApplicationServerThread(Thread):
-    def __init__(self, *args, **kwargs):
-        super(ApplicationServerThread, self).__init__(*args, **kwargs)
-        self._server = make_server(host='', port=PORT, app=application)
-
-    def run(self):
-        self._server.serve_forever()
-
-    def stop(self):
-        self._server.shutdown()
-
-def test(function):
-    function = istest(function)
-    @wraps(function)
-    def wrapper(*args, **kwargs):
-        server_thread = ApplicationServerThread()
-        server_thread.start()
-        function(*args, **kwargs)
-        server_thread.stop()
-        server_thread.join()
-    return wrapper
+from test_decorator import test, PORT
 
 @test
-def fake_test():
-    pass
-    
+def static_files_are_served_correctly():
+    file_names = ['logo.png', 'sprite.png', 'glimpse.js']
 
-# @istest
-# def something(): ...
-# ===
-# def something(): ...
-# something = istest(something)
+    for file_name in file_names:
+        url = 'http://localhost:{0}/glimpse/{1}'.format(PORT, file_name)
+        request = requests.get(url)
+        assert_equal(200, request.status_code)
 
+        file_path = dirname(__file__) + '/../static_files/' + file_name
+        with open(file_path, 'rb') as static_file:
+            assert_equal(static_file.read(), request.content)
