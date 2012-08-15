@@ -18,7 +18,7 @@ def can_generate_resource_metadata_from_definitions():
 
     expected = {
         "glimpse_logo": "/glimpse/logo.png",
-        "metadata": "/glimpse/metadata{&callback}"
+        "glimpse_metadata": "/glimpse/metadata{&callback}"
     }
 
     assert_equal(expected, generate_metadata(resources))
