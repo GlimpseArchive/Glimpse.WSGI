@@ -23,4 +23,7 @@ def script_files_are_inserted():
     request = requests.get('http://localhost:{0}/'.format(PORT))
     script_tag = '<script type="text/javascript" src="/glimpse/glimpse.js">'
     script_tag += '</script>'
+    script_tag += '<script type="text/javascript" '
+    script_tag += 'src="/glimpse/metadata?callback=glimpse.data.initMetadata">'
+    script_tag += '</script>'
     assert_in(script_tag, request.text)
