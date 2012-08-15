@@ -14,7 +14,15 @@ class Configuration(object):
     ]
     default_resource = _resource('404.txt')
 
+    _script_sources = [
+        'glimpse.js',
+        'metadata?callback=glimpse.data.initMetadata'
+    ]
+
     def generate_script_tags(self):
-        return '<script type="text/javascript" src="/glimpse/glimpse.js"></script>'
+        script_tag = '<script type="text/javascript" src="/glimpse/{0}"></script>'
+        tag_list = (script_tag.format(source) 
+                    for source in self._script_sources)
+        return ''.join(tag_list)
 
 configuration = Configuration()
