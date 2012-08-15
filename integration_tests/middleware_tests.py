@@ -3,7 +3,7 @@ from os.path import dirname
 import requests
 from nose.tools import assert_equal, assert_in
 
-from test_decorator import test, PORT
+from integration_test_decorator import test, PORT
 
 @test
 def static_files_are_served_correctly():

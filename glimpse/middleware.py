@@ -1,28 +1,14 @@
 import re
 from urlparse import parse_qs
 
-from configuration import Configuration
-from staticresource import StaticResource
+from configuration import configuration
 
-from os.path import dirname
 from glimpse import log
 
-def _resource(file_name):
-    path = '{0}/../static_files/{1}'.format(dirname(__file__), file_name)
-    return StaticResource(path)
-
 class Middleware(object):
-    _resources = [
-        ('^logo\.png', _resource('logo.png')),
-        ('^sprite\.png', _resource('sprite.png')),
-        ('^glimpse\.js', _resource('glimpse.js'))
-    ]
-    _default_resource = _resource('404.txt')
-
     def __init__(self, application):
         log.info('Loading Glimpse middleware')
         self._application = application
-        self._config = Configuration()
 
     def __call__(self, environ, start_response):
         if environ['PATH_INFO'].startswith('/glimpse'):
@@ -31,7 +17,7 @@ class Middleware(object):
             return self._hook_into_application(environ, start_response)
 
     def _filter_data(self, data):
-        body_with_script = self._config.generate_script_tags() + '</body>'
+        body_with_script = configuration.generate_script_tags() + '</body>'
         return data.replace('</body>', body_with_script)
 
     def _hook_into_application(self, environ, start_response):
@@ -60,7 +46,7 @@ class Middleware(object):
 
         resource, arguments = self._match_resource(resource_url)
         if resource is None:
-            resource = self._default_resource
+            resource = configuration.default_resource
             arguments = {}
             status = '404 No matching resource'
         else:
@@ -70,7 +56,7 @@ class Middleware(object):
         return [resource.handle(request, **arguments)]
 
     def _match_resource(self, resource_url):
-        for url_pattern, resource in self._resources:
+        for url_pattern, resource in configuration.resources:
             matching = re.match(url_pattern, resource_url)
             if matching is not None:
                 arguments = self._extract_arguments(matching)

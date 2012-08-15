@@ -1,10 +1,10 @@
-from cStringIO import StringIO
-
 from nose.tools import istest, assert_equal
 
-import glimpse.middleware
+from glimpse.configuration import configuration
 from glimpse.middleware import Middleware
-from glimpse.configuration import Configuration
+from unit_test_decorator import test_with_resources
+from application_creation import create_application
+from wsgi_test_server import output_from_application
 
 @istest
 def wsgi_test_environment_behaves_correctly():
@@ -14,23 +14,11 @@ def wsgi_test_environment_behaves_correctly():
 
 @istest
 def middleware_inserts_script_tags_in_returned_data():
-    middleware = create_middleware()
+    middleware = Middleware(create_application())
     response = output_from_application(middleware)
-    script_tags = Configuration().generate_script_tags()
+    script_tags = configuration.generate_script_tags()
     expected = '<html><body>{0}</body></html>'.format(script_tags)
     assert_equal(expected, response)
-
-@istest
-def middleware_forwards_appropriate_requests_to_resources():
-    test_resources = [('^(?P<name>\w+)?', UrlBasedGreeterResource())]
-
-    middleware = create_middleware(test_resources)
-
-    default_response = output_from_application(middleware, '/glimpse')
-    assert_equal(default_response, 'Hello, World!')
-
-    named_response = output_from_application(middleware, '/glimpse/Nik')
-    assert_equal(named_response, 'Hello, Nik!')
 
 class UrlBasedGreeterResource(object):
     def get_headers(self):
@@ -39,14 +27,15 @@ class UrlBasedGreeterResource(object):
     def handle(self, request, name='World'):
         return 'Hello, {0}!'.format(name)
 
-@istest
-def middleware_passes_query_data_to_resources():
-    test_resources = [('^$', QueryBasedGreeterResource())]
+@test_with_resources([('^(?P<name>\w+)?', UrlBasedGreeterResource())])
+def middleware_forwards_appropriate_requests_to_resources():
+    middleware = Middleware(create_application())
 
-    middleware = create_middleware(test_resources)
+    default_response = output_from_application(middleware, '/glimpse')
+    assert_equal(default_response, 'Hello, World!')
 
-    response = output_from_application(middleware, '/glimpse/?name=Nik')
-    assert_equal(response, 'Hello, Nik!')
+    named_response = output_from_application(middleware, '/glimpse/Nik')
+    assert_equal(named_response, 'Hello, Nik!')
 
 class QueryBasedGreeterResource(object):
     def get_headers(self):
@@ -55,37 +44,10 @@ class QueryBasedGreeterResource(object):
     def handle(self, request):
         return 'Hello, {0}!'.format(request.query_data['name'])
 
-
-def create_application():
-    def application(environ, start_response):
-        start_response('200 OK', [('Content-type', 'text/html')])
-        return ['<html><body></body></html>']
-
-    return application
-
-def create_middleware(resources=None):
+@test_with_resources([('^$', QueryBasedGreeterResource())])
+def middleware_passes_query_data_to_resources():
     middleware = Middleware(create_application())
-    if resources is not None:
-        middleware._resources = resources
-    return middleware
 
-def output_from_application(application, request_path='/'):
-    output = StringIO()
+    response = output_from_application(middleware, '/glimpse/?name=Nik')
+    assert_equal(response, 'Hello, Nik!')
 
-    environ = {}
-    request_parts = request_path.split('?')
-    environ['PATH_INFO'] = request_parts[0]
-    if len(request_parts) > 1:
-        environ['QUERY_STRING'] = request_parts[1]
-
-    def start_response(status, response_headers, exc_info=None):
-        return output.write
-
-    data = application(environ, start_response)
-    
-    for item in data:
-        output.write(item)
-
-    response = output.getvalue()
-    output.close()
-    return response
