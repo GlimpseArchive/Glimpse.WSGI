@@ -59,11 +59,12 @@ class Middleware(object):
 
     def _match_resource(self, resource_url):
         path = urlparse(resource_url).path
-        for name, endpoint, resource in configuration.resources:
+        for resource_definition in configuration.resources:
+            endpoint = resource_definition.endpoint
             log.debug('Checking path %s against endpoint %s', path, endpoint)
             matching_arguments = self._match_url(endpoint, path)
             if matching_arguments is not None:
-                return (resource, matching_arguments)
+                return (resource_definition.resource, matching_arguments)
                 
         return (None, None)
 
