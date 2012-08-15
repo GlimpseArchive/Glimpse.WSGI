@@ -8,7 +8,7 @@ def callback_in_query_string_is_used():
     request = TestRequest(query_string)
     resource = GreeterResource()
     response = resource.handle(request)
-    assert_equal('callback_function("Hello world")', response)
+    assert_equal('callback_function("Hello world");', response)
 
 class GreeterResource(object):
     @callbackenabled
