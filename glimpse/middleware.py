@@ -1,5 +1,5 @@
 import re
-from urlparse import parse_qs
+from urlparse import parse_qs, urlparse
 
 from configuration import configuration
 
@@ -38,7 +38,7 @@ class Middleware(object):
         return (self._filter_data(item) for item in data)
 
     def _execute_resource(self, environ, start_response):
-        resource_url = environ['PATH_INFO'][len('/glimpse'):].lstrip('/')
+        resource_url = environ['PATH_INFO'][len('/glimpse'):]
         log.info('Got a request for {0}'.format(resource_url))
 
         query_data = self._parse_query_string(environ.get('QUERY_STRING', ''))
@@ -47,27 +47,37 @@ class Middleware(object):
         resource, arguments = self._match_resource(resource_url)
         if resource is None:
             resource = configuration.default_resource
-            arguments = {}
+            arguments = []
             status = '404 No matching resource'
         else:
             status = '200 OK'
 
+        log.debug('Url arguments: %s', str(arguments))
+
         start_response(status, resource.get_headers())
-        return [resource.handle(request, **arguments)]
+        return [resource.handle(request, *arguments)]
 
     def _match_resource(self, resource_url):
-        for url_pattern, resource in configuration.resources:
-            matching = re.match(url_pattern, resource_url)
-            if matching is not None:
-                arguments = self._extract_arguments(matching)
-                return (resource, arguments)
+        path = urlparse(resource_url).path
+        for name, endpoint, resource in configuration.resources:
+            log.debug('Checking path %s against endpoint %s', path, endpoint)
+            matching_arguments = self._match_url(endpoint, path)
+            if matching_arguments is not None:
+                return (resource, matching_arguments)
+                
         return (None, None)
-        
-    def _extract_arguments(self, matching):
-        return {key: value 
-                for key, value in matching.groupdict().iteritems()
-                if value is not None}
 
+    def _match_url(self, endpoint, path):
+        path = path.rstrip('/')
+        if not endpoint == '':
+            path = path.lstrip('/')
+        parts = path.split('/')
+
+        if not parts[0] == endpoint:
+            return None
+
+        return parts[1:]
+        
     def _parse_query_string(self, query_string):
         query_data = parse_qs(query_string)
         query_data = {key: value.pop() if len(value) == 1 else value

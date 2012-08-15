@@ -1,6 +1,6 @@
 from nose.tools import istest, assert_equal
 
-from glimpse.configuration import configuration
+from glimpse.configuration import configuration, ResourceDefinition
 from glimpse.middleware import Middleware
 from unit_test_decorator import test_with_resources
 from application_creation import create_application
@@ -27,7 +27,7 @@ class UrlBasedGreeterResource(object):
     def handle(self, request, name='World'):
         return 'Hello, {0}!'.format(name)
 
-@test_with_resources([('^(?P<name>\w+)?', UrlBasedGreeterResource())])
+@test_with_resources([ResourceDefinition('', '', UrlBasedGreeterResource())])
 def middleware_forwards_appropriate_requests_to_resources():
     middleware = Middleware(create_application())
 
@@ -44,9 +44,22 @@ class QueryBasedGreeterResource(object):
     def handle(self, request):
         return 'Hello, {0}!'.format(request.query_data['name'])
 
-@test_with_resources([('^$', QueryBasedGreeterResource())])
+@test_with_resources([ResourceDefinition('', '', QueryBasedGreeterResource())])
 def middleware_passes_query_data_to_resources():
     middleware = Middleware(create_application())
 
     response = output_from_application(middleware, '/glimpse/?name=Nik')
     assert_equal(response, 'Hello, Nik!')
+
+@istest
+def arguments_are_properly_extracted():
+    match_url = Middleware(None)._match_url
+
+    assert_equal(None, match_url('client', '/id/12'))
+    assert_equal(None, match_url('cli', '/client/12'))
+    assert_equal(None, match_url('cli', '/client'))
+    assert_equal(['12', 'add'], match_url('id', '/id/12/add/'))
+    assert_equal(['12', 'add'], match_url('id', '/id/12/add'))
+    assert_equal(['12', 'add'], match_url('', '/12/add/'))
+    assert_equal([], match_url('', ''))
+    assert_equal([], match_url('', '/'))
