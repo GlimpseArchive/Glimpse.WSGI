@@ -7,7 +7,7 @@ class StaticResource(object):
         if self._mimetype is None:
             raise ValueError('No mimetype provided and cannot guess mimetype')
 
-    def handle(self):
+    def handle(self, request):
         with open(self._file_name) as resource_file:
             return resource_file.read()
 

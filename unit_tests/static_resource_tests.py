@@ -10,7 +10,7 @@ def handling_static_resources_returns_contents_of_file():
     with open(test_file_path) as test_file:
         expected = test_file.read()
     resource = StaticResource(test_file_path)
-    assert_equal(expected, resource.handle())
+    assert_equal(expected, resource.handle(None))
 
 @istest
 def detected_content_type_matches_file_type():
