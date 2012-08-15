@@ -1,6 +1,7 @@
 from os.path import dirname
 
 from glimpse.staticresource import StaticResource
+from glimpse.metadataresource import MetadataResource
 
 def _resource(file_name):
     path = '{0}/../static_files/{1}'.format(dirname(__file__), file_name)
@@ -10,7 +11,8 @@ class Configuration(object):
     resources = [
         ('^logo\.png', _resource('logo.png')),
         ('^sprite\.png', _resource('sprite.png')),
-        ('^glimpse\.js', _resource('glimpse.js'))
+        ('^glimpse\.js', _resource('glimpse.js')),
+        ('^metadata', MetadataResource())
     ]
     default_resource = _resource('404.txt')
 
