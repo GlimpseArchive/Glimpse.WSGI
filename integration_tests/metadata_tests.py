@@ -15,6 +15,7 @@ def metadata_endpoint_exists():
 @test
 def correct_metadata_is_returned():
     metadata = {
+        'version': '0.0.1',
         'plugins': {},
         'resources': resource_configuration.get_resource_metadata()
     }

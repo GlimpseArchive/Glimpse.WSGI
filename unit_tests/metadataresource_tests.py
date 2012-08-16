@@ -11,8 +11,9 @@ def can_get_metadata_as_dict():
         resources_as_dict
     )
     expected = {
-        'plugins' : { },
-        'resources' : expected_resources
+        'version': '0.0.1',
+        'plugins': { },
+        'resources': expected_resources
     }
     
     assert_equal(expected, MetadataResource()._get_metadata())

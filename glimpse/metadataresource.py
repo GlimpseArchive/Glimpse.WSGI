@@ -14,6 +14,7 @@ class MetadataResource(object):
     def _get_metadata(self):
         resource_metadata = resource_configuration.get_resource_metadata()
         metadata = {
+            'version': '0.0.1',
             'plugins': {},
             'resources': resource_metadata
         }
