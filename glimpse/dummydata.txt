@@ -1,0 +1,318 @@
+{
+    "clientId": "Chrome 21.0",
+    "dateTime": "/Date(1345107553478+0100)/",
+    "duration": 55,
+    "parentRequestId": null,
+    "requestId": "1c077a57-1a61-46ad-bbc7-ff4fb88c147b",
+    "isAjax": "False",
+    "method": "GET",
+    "uri": "http://localhost:33333/",
+    "contentType": "text/html",
+    "statusCode": 200,
+    "data": {
+        "Glimpse.AspNet.Tab.Request": {
+            "data": {
+                "Cookies": [
+                    [
+                        "Name",
+                        "Value",
+                        "Path",
+                        "Secure"
+                    ],
+                    [
+                        "glimpseState",
+                        "null",
+                        "/",
+                        "False"
+                    ],
+                    [
+                        "ASP.NET_SessionId",
+                        "wp3ss1iuil32s0rzx1phebok",
+                        "/",
+                        "False"
+                    ],
+                    [
+                        "glimpseId",
+                        "Chrome 21.0",
+                        "/",
+                        "False"
+                    ],
+                    [
+                        "glimpseOptions",
+                        "{\"height\":250,\"activeTab\":\"Glimpse.Mvc.Tab.Views\",\"open\":false}",
+                        "/",
+                        "False"
+                    ]
+                ],
+                "Query String": [
+                    [
+                        "Name",
+                        "Value"
+                    ]
+                ],
+                "Url": "http://localhost:33333/",
+                "Url Referrer": null,
+                "App Relative Current Execution File Path": "~/",
+                "Application Path": "/",
+                "Current Execution File Path": "/",
+                "Current UI Culture": "en-US",
+                "File Path": "/",
+                "Path": "/",
+                "Path Info": "",
+                "Physical Application Path": "C:\\Users\\lewis.brown\\Documents\\GitHub\\Glimpse\\source\\Glimpse.Mvc3.MusicStore.Sample\\",
+                "Physical Path": "C:\\Users\\lewis.brown\\Documents\\GitHub\\Glimpse\\source\\Glimpse.Mvc3.MusicStore.Sample",
+                "Raw Url": "/",
+                "User Agent": "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.1 (KHTML, like Gecko) Chrome/21.0.1180.79 Safari/537.1",
+                "User Host Address": "::1",
+                "User Host Name": "::1"
+            },
+            "name": "Request"
+        },
+        "Glimpse.Mvc.Tab.Views": {
+            "data": [
+                [
+                    "Ordinal",
+                    "Requested View",
+                    "Master Override",
+                    "Partial",
+                    "View Engine",
+                    "Check Cache",
+                    "Found",
+                    "Details"
+                ],
+                [
+                    0,
+                    "Index",
+                    "",
+                    "False",
+                    "WebFormViewEngine",
+                    "True",
+                    "False",
+                    [
+                        [
+                            "Not Found In"
+                        ],
+                        [
+                            "_WebFormViewEngine cache_"
+                        ]
+                    ]
+                ],
+                [
+                    1,
+                    "Index",
+                    "",
+                    "False",
+                    "RazorViewEngine",
+                    "True",
+                    "False",
+                    [
+                        [
+                            "Not Found In"
+                        ],
+                        [
+                            "_RazorViewEngine cache_"
+                        ]
+                    ]
+                ],
+                [
+                    2,
+                    "Index",
+                    "",
+                    "False",
+                    "WebFormViewEngine",
+                    "False",
+                    "False",
+                    [
+                        [
+                            "Not Found In"
+                        ],
+                        [
+                            "~/Views/Home/Index.aspx"
+                        ],
+                        [
+                            "~/Views/Home/Index.ascx"
+                        ],
+                        [
+                            "~/Views/Shared/Index.aspx"
+                        ],
+                        [
+                            "~/Views/Shared/Index.ascx"
+                        ]
+                    ]
+                ],
+                [
+                    3,
+                    "Index",
+                    "",
+                    "False",
+                    "RazorViewEngine",
+                    "False",
+                    "True",
+                    {
+                        "Model Type": "List<Album>",
+                        "Model State Valid": "True",
+                        "TempData Keys": [],
+                        "ViewData Keys": []
+                    },
+                    "selected"
+                ],
+                [
+                    4,
+                    "CartSummary",
+                    "",
+                    "True",
+                    "WebFormViewEngine",
+                    "True",
+                    "False",
+                    [
+                        [
+                            "Not Found In"
+                        ],
+                        [
+                            "_WebFormViewEngine cache_"
+                        ]
+                    ]
+                ],
+                [
+                    5,
+                    "CartSummary",
+                    "",
+                    "True",
+                    "RazorViewEngine",
+                    "True",
+                    "False",
+                    [
+                        [
+                            "Not Found In"
+                        ],
+                        [
+                            "_RazorViewEngine cache_"
+                        ]
+                    ]
+                ],
+                [
+                    6,
+                    "CartSummary",
+                    "",
+                    "True",
+                    "WebFormViewEngine",
+                    "False",
+                    "False",
+                    [
+                        [
+                            "Not Found In"
+                        ],
+                        [
+                            "~/Views/ShoppingCart/CartSummary.aspx"
+                        ],
+                        [
+                            "~/Views/ShoppingCart/CartSummary.ascx"
+                        ],
+                        [
+                            "~/Views/Shared/CartSummary.aspx"
+                        ],
+                        [
+                            "~/Views/Shared/CartSummary.ascx"
+                        ]
+                    ]
+                ],
+                [
+                    7,
+                    "CartSummary",
+                    "",
+                    "True",
+                    "RazorViewEngine",
+                    "False",
+                    "True",
+                    {
+                        "Model Type": null,
+                        "Model State Valid": "True",
+                        "TempData Keys": [],
+                        "ViewData Keys": [
+                            "CartCount"
+                        ]
+                    },
+                    "selected"
+                ],
+                [
+                    8,
+                    "GenreMenu",
+                    "",
+                    "True",
+                    "WebFormViewEngine",
+                    "True",
+                    "False",
+                    [
+                        [
+                            "Not Found In"
+                        ],
+                        [
+                            "_WebFormViewEngine cache_"
+                        ]
+                    ]
+                ],
+                [
+                    9,
+                    "GenreMenu",
+                    "",
+                    "True",
+                    "RazorViewEngine",
+                    "True",
+                    "False",
+                    [
+                        [
+                            "Not Found In"
+                        ],
+                        [
+                            "_RazorViewEngine cache_"
+                        ]
+                    ]
+                ],
+                [
+                    10,
+                    "GenreMenu",
+                    "",
+                    "True",
+                    "WebFormViewEngine",
+                    "False",
+                    "False",
+                    [
+                        [
+                            "Not Found In"
+                        ],
+                        [
+                            "~/Views/Store/GenreMenu.aspx"
+                        ],
+                        [
+                            "~/Views/Store/GenreMenu.ascx"
+                        ],
+                        [
+                            "~/Views/Shared/GenreMenu.aspx"
+                        ],
+                        [
+                            "~/Views/Shared/GenreMenu.ascx"
+                        ]
+                    ]
+                ],
+                [
+                    11,
+                    "GenreMenu",
+                    "",
+                    "True",
+                    "RazorViewEngine",
+                    "False",
+                    "True",
+                    {
+                        "Model Type": "List<Genre>",
+                        "Model State Valid": "True",
+                        "TempData Keys": [],
+                        "ViewData Keys": []
+                    },
+                    "selected"
+                ]
+            ],
+            "name": "Views"
+        }
+    },
+    "userAgent": "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.1 (KHTML, like Gecko) Chrome/21.0.1180.79 Safari/537.1"
+}
