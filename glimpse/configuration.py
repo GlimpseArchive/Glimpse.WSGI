@@ -30,7 +30,7 @@ class Configuration(object):
         add_resource_definition(
             name='metadata',
             endpoint='metadata',
-            url_template='metadata{&callback}',
+            url_template='metadata?{&callback}',
             resource=MetadataResource()
         )
 
