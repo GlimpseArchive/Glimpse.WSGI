@@ -18,6 +18,12 @@ class Configuration(object):
     ''' resources is a list of triples of the resource name, the endpoint and
     then the resource object for handling the request.'''
 
+    _expected_resource_names = [
+        'paging', 'tab', 'glimpse_client', 'glimpse_config', 'glimpse_ajax',
+        'glimpse_history', 'glimpse_logo', 'glimpse_popup', 'glimpse_request',
+        'glimpse_metadata', 'glimpse_sprite'
+    ]
+
     resources = [
         ResourceDefinition('logo', 'logo.png', _resource('logo.png')),
         ResourceDefinition('sprite', 'sprite.png', _resource('sprite.png')),
@@ -35,6 +41,10 @@ class Configuration(object):
         'glimpse.js',
         'metadata?callback=glimpse.data.initMetadata'
     ]
+
+    @staticmethod
+    def _add_unimplemented_resources(resource_metadata):
+        return {}
 
     @staticmethod
     def _generate_resource_metadata(resource_definitions):
