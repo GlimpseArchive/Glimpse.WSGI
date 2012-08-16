@@ -10,14 +10,11 @@ def test_with_resources(resources):
         function = istest(function)
         @wraps(function)
         def wrapper(*args, **kwargs):
-            initial_configuration = middleware.configuration
-
-            test_configuration = Configuration()
-            test_configuration.resources = resources
-            middleware.configuration = test_configuration
+            initial_resources = middleware.configuration.resources
+            middleware.configuration.resources = resources
             try:
                 function(*args, **kwargs)
             finally:
-                middleware.configuration = initial_configuration
+                middleware.configuration.resources = initial_resources
         return wrapper
     return wrap

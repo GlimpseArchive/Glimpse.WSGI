@@ -42,9 +42,11 @@ class Configuration(object):
         'metadata?callback=glimpse.data.initMetadata'
     ]
 
-    @staticmethod
-    def _add_unimplemented_resources(resource_metadata):
-        return {}
+    def _add_unimplemented_resources(self, resource_metadata):
+        complete_metadata = {name: 'NEED TO IMPLEMENT RESOURCE ' + name
+                             for name in self._expected_resource_names}
+        complete_metadata.update(resource_metadata)
+        return complete_metadata
 
     @staticmethod
     def _generate_resource_metadata(resource_definitions):
@@ -53,7 +55,13 @@ class Configuration(object):
                 for definition in resource_definitions}           
 
     def get_metadata(self):
-        pass
+        resource_metadata = self._generate_resource_metadata(self.resources)
+        resource_metadata = self._add_unimplemented_resources(resource_metadata)
+        metadata = {
+            'plugins': {},
+            'resources': resource_metadata
+        }
+        return metadata
 
     def generate_script_tags(self):
         script_tag = '<script type="text/javascript" src="/glimpse/{0}"></script>'

@@ -44,5 +44,5 @@ def can_get_metadata_as_dict():
         'plugins' : { },
         'resources' : expected_resources
     }
-
+    
     assert_equal(expected, configuration.get_metadata())
