@@ -1,6 +1,8 @@
 from nose.tools import istest, assert_equal
 
-from glimpse.configuration import configuration, ResourceDefinition
+from glimpse.configuration import configuration
+from glimpse.resourceconfiguration import resource_configuration
+from glimpse.resourceconfiguration import ResourceDefinition
 from glimpse.middleware import Middleware
 from unit_test_decorator import test_with_resources
 from application_creation import create_application

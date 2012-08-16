@@ -1,8 +1,8 @@
 import re
 from urlparse import parse_qs, urlparse
 
-from configuration import configuration
-
+from glimpse.configuration import configuration
+from glimpse.resourceconfiguration import resource_configuration
 from glimpse import log
 
 class Middleware(object):
@@ -59,7 +59,8 @@ class Middleware(object):
 
     def _match_resource(self, resource_url):
         path = urlparse(resource_url).path
-        for resource_definition in configuration.resources:
+        resource_definitions = resource_configuration.resource_definitions
+        for resource_definition in resource_definitions:
             endpoint = resource_definition.endpoint
             log.debug('Checking path %s against endpoint %s', path, endpoint)
             matching_arguments = self._match_url(endpoint, path)

@@ -2,19 +2,18 @@ from functools import wraps
 
 from nose.tools import istest
 
-from glimpse.configuration import Configuration
-from glimpse import middleware
+from glimpse import resourceconfiguration
 
 def test_with_resources(resources):
     def wrap(function):
         function = istest(function)
         @wraps(function)
         def wrapper(*args, **kwargs):
-            initial_resources = middleware.configuration.resources
-            middleware.configuration.resources = resources
+            initial_resources = resourceconfiguration.resource_configuration.resource_definitions
+            resourceconfiguration.resource_configuration.resource_definitions = resources
             try:
                 function(*args, **kwargs)
             finally:
-                middleware.configuration.resources = initial_resources
+                resourceconfiguration.resource_configuration.resource_definitions = initial_resources
         return wrapper
     return wrap
