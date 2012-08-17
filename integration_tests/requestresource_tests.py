@@ -18,7 +18,10 @@ def request_resource_json_contains_information_from_environ():
     response_json = _send_request_to_requestresource().text
     response = json.loads(response_json)
     assert_in('data', response)
-    assert_in('REQUEST_METHOD', response['data'])
+    assert_in('Glimpse.WSGI.Tab.Request', response['data'])
+    request_tab_data = response['data']['Glimpse.WSGI.Tab.Request']
+    assert_in('data', request_tab_data)
+    assert_in('REQUEST_METHOD', request_tab_data['data'])
 
 def _send_request_to_requestresource():
     request = requests.get(application_url())

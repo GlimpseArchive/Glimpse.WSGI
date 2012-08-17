@@ -19,7 +19,7 @@ def returns_correct_data_from_request_store():
 
     request_resource = RequestResource()
 
-    response = request_resource.handle(_Request(''), uuid)
+    response = request_resource.handle(_Request({}), uuid)
     expected_response = request_store[uuid]
     expected_response['requestId'] = uuid
 

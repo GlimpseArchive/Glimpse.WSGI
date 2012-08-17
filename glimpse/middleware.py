@@ -5,6 +5,7 @@ from urlparse import parse_qs, urlparse
 from glimpse.configuration import configuration
 from glimpse.resourceconfiguration import resource_configuration
 from glimpse.requeststore import request_store
+from glimpse.wsgi_request_data import inject_data_from_environ
 from glimpse import log
 
 class Middleware(object):
@@ -34,6 +35,7 @@ class Middleware(object):
         request_id = [None]
         def start_glimpse_response(status, response_headers, exc_info=None):
             request_id[0] = self._track_request(response_headers)
+            inject_data_from_environ(request_id[0], environ)
             lowered_headers = [(key.lower(), value.lower()) 
                                for key, value in response_headers]
             write = start_response(status, response_headers, exc_info)
@@ -47,6 +49,7 @@ class Middleware(object):
             return middleware_write
         
         data = self._application(environ, start_glimpse_response)
+
         return (self._filter_data(item, request_id[0]) for item in data)
 
     def _execute_resource(self, environ, start_response):
@@ -54,7 +57,7 @@ class Middleware(object):
         log.info('Got a request for {0}'.format(resource_url))
 
         query_data = self._parse_query_string(environ.get('QUERY_STRING', ''))
-        request = _Request(query_data)
+        request = _Request(query_data, environ)
 
         resource, arguments = self._match_resource(resource_url)
         if resource is None:
@@ -102,7 +105,8 @@ class Middleware(object):
         return query_data
 
 class _Request(object):
-    def __init__(self, query_data):
+    def __init__(self, query_data, environ=None):
+        self.environ = environ
         self.query_data = query_data
         self.response_status = '200 Ok'
         self.response_headers = {}
