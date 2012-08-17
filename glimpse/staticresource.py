@@ -8,8 +8,6 @@ class StaticResource(object):
             raise ValueError('No mimetype provided and cannot guess mimetype')
 
     def handle(self, request):
+        request.response_headers['content-type'] = self._mimetype
         with open(self._file_name) as resource_file:
             return resource_file.read()
-
-    def get_headers(self):
-        return [('content-type', self._mimetype)]

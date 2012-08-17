@@ -50,13 +50,13 @@ class Middleware(object):
             arguments = []
             status = '404 No matching resource'
         else:
-            status = '200 OK'
+            status = request.response_status
 
         log.debug('Url arguments: %s', str(arguments))
 
-        start_response(status, resource.get_headers())
+        start_response(status, request.get_response_header_list())
         return [resource.handle(request, *arguments)]
-
+    
     def _match_resource(self, resource_url):
         path = urlparse(resource_url).path
         resource_definitions = resource_configuration.resource_definitions
@@ -89,6 +89,11 @@ class Middleware(object):
 class _Request(object):
     def __init__(self, query_data):
         self.query_data = query_data
+        self.response_status = '200 Ok'
+        self.response_headers = {}
+
+    def get_response_header_list(self):
+        return self.response_headers.items()
 
 def wrap_application(wsgi_application):
     return Middleware(wsgi_application)

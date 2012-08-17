@@ -23,10 +23,8 @@ def middleware_inserts_script_tags_in_returned_data():
     assert_equal(expected, response)
 
 class UrlBasedGreeterResource(object):
-    def get_headers(self):
-        return [('content-type', 'text/plain')]
-
     def handle(self, request, name='World'):
+        request.response_headers['content-type'] = 'text/plain'
         return 'Hello, {0}!'.format(name)
 
 @test_with_resources([ResourceDefinition('', '', UrlBasedGreeterResource())])
@@ -40,10 +38,8 @@ def middleware_forwards_appropriate_requests_to_resources():
     assert_equal(named_response, 'Hello, Nik!')
 
 class QueryBasedGreeterResource(object):
-    def get_headers(self):
-        return [('content-type', 'text/plain')]
-
     def handle(self, request):
+        request.response_headers['content-type'] = 'text/plain'
         return 'Hello, {0}!'.format(request.query_data['name'])
 
 @test_with_resources([ResourceDefinition('', '', QueryBasedGreeterResource())])

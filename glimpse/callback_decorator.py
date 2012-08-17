@@ -8,5 +8,7 @@ def callbackenabled(handle_function):
         if callback is None:
             return result
         else:
+            javascript_content = 'application/x-javascript'
+            request.response_headers['content-type'] = javascript_content
             return '{0}({1});'.format(callback, result)
     return wrapper
