@@ -1,8 +1,10 @@
 import json
 
 from glimpse.requeststore import request_store
+from glimpse.callback_decorator import callbackenabled
 
 class RequestResource(object):
+    @callbackenabled
     def handle(self, request, request_id=None):
         response_data = request_store.get(request_id, None)
         
@@ -18,4 +20,3 @@ class RequestResource(object):
 
         request.response_headers['content-type'] = content_type
         return response_data
-            

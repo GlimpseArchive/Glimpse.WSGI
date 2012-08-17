@@ -15,7 +15,7 @@ class Configuration(object):
     _script_sources = [
         'glimpse.js',
         'metadata?callback=glimpse.data.initMetadata',
-        'request/{request_id}'
+        'request/{request_id}?callback=glimpse.data.initData'
     ]
 
     def __init__(self):
