@@ -24,7 +24,7 @@ def script_tags_are_inserted():
     request_id = request.headers['x-glimpse-requestid']
     script_sources = ['glimpse.js',
                       'metadata?callback=glimpse.data.initMetadata',
-                      'request/{0}'.format(request_id)]
+                      'request/{0}?callback=glimpse.data.initData'.format(request_id)]
     script_tags = ''.join([_script_tag(source) for source in script_sources])
     assert_in(script_tags, request.text)
 
