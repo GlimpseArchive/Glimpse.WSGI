@@ -1,8 +1,10 @@
 import re
+from uuid import uuid4
 from urlparse import parse_qs, urlparse
 
 from glimpse.configuration import configuration
 from glimpse.resourceconfiguration import resource_configuration
+from glimpse.requeststore import request_store
 from glimpse import log
 
 class Middleware(object):
@@ -20,9 +22,16 @@ class Middleware(object):
         body_with_script = configuration.generate_script_tags() + '</body>'
         return data.replace('</body>', body_with_script)
 
+    @staticmethod
+    def _track_request(response_headers):
+        request_id = uuid4().hex
+        response_headers.append(('x-glimpse-requestid', request_id))
+        request_store[request_id] = {}
+
     def _hook_into_application(self, environ, start_response):
         log.info('Passing request to application')
         def start_glimpse_response(status, response_headers, exc_info=None):
+            self._track_request(response_headers)
             lowered_headers = [(key.lower(), value.lower()) 
                                for key, value in response_headers]
             write = start_response(status, response_headers, exc_info)
@@ -46,23 +55,26 @@ class Middleware(object):
 
         resource, arguments = self._match_resource(resource_url)
         if resource is None:
-            resource = configuration.default_resource
+            resource = resource_configuration.default_resource
             arguments = []
             status = '404 No matching resource'
         else:
             status = request.response_status
 
+        response_data = resource.handle(request, *arguments)
+
         log.debug('Url arguments: %s', str(arguments))
+        log.debug('Response headers: %s',
+                  str(request.get_response_header_list()))
 
         start_response(status, request.get_response_header_list())
-        return [resource.handle(request, *arguments)]
+        return [response_data]
     
     def _match_resource(self, resource_url):
         path = urlparse(resource_url).path
         resource_definitions = resource_configuration.resource_definitions
         for resource_definition in resource_definitions:
             endpoint = resource_definition.endpoint
-            log.debug('Checking path %s against endpoint %s', path, endpoint)
             matching_arguments = self._match_url(endpoint, path)
             if matching_arguments is not None:
                 return (resource_definition.resource, matching_arguments)

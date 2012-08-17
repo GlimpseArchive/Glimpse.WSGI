@@ -2,7 +2,7 @@ from os.path import dirname
 
 from glimpse.staticresource import StaticResource
 from glimpse.metadataresource import MetadataResource
-from glimpse.dummyresource import DummyResource
+from glimpse.requestresource import RequestResource
 from glimpse.resourceconfiguration import resource_configuration
 from glimpse.resourceconfiguration import ResourceDefinition
 
@@ -13,8 +13,7 @@ def _resource(file_name):
 class Configuration(object):
     _script_sources = [
         'glimpse.js',
-        'metadata?callback=glimpse.data.initMetadata',
-        'dummy?callback=glimpse.data.initData'
+        'metadata?callback=glimpse.data.initMetadata'
     ]
 
     def __init__(self):
@@ -30,11 +29,11 @@ class Configuration(object):
         add_resource_definition('sprite', 'sprite.png', _resource('sprite.png'))
         add_resource_definition('client', 'glimpse.js', _resource('glimpse.js'))
         add_resource_definition(
-            name='dummy',
-            endpoint='dummy',
-            url_template='metadata?{&callback}',
-            resource=DummyResource()
-        ),
+            name='request',
+            endpoint='request',
+            url_template='request/{requestId}',
+            resource = RequestResource()
+        )
         add_resource_definition(
             name='metadata',
             endpoint='metadata',
