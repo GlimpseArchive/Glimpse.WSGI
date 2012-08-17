@@ -18,7 +18,7 @@ def wsgi_test_environment_behaves_correctly():
 def middleware_inserts_script_tags_in_returned_data():
     middleware = Middleware(create_application())
     response = output_from_application(middleware)
-    script_tags = configuration.generate_script_tags()
+    script_tags = configuration.generate_script_tags('uuid')
     expected = '<html><body>{0}</body></html>'.format(script_tags)
     assert_equal(expected, response)
 

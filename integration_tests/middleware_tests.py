@@ -19,11 +19,15 @@ def static_files_are_served_correctly():
             assert_equal(static_file.read(), request.content)
 
 @test
-def script_files_are_inserted():
+def script_tags_are_inserted():
     request = requests.get(application_url())
-    script_tag = '<script type="text/javascript" src="/glimpse/glimpse.js">'
-    script_tag += '</script>'
-    script_tag += '<script type="text/javascript" '
-    script_tag += 'src="/glimpse/metadata?callback=glimpse.data.initMetadata">'
-    script_tag += '</script>'
-    assert_in(script_tag, request.text)
+    request_id = request.headers['x-glimpse-requestid']
+    script_sources = ['glimpse.js',
+                      'metadata?callback=glimpse.data.initMetadata',
+                      'request/{0}'.format(request_id)]
+    script_tags = ''.join([_script_tag(source) for source in script_sources])
+    assert_in(script_tags, request.text)
+
+def _script_tag(source):
+    tag_template = '<script type="text/javascript" src="/glimpse/{0}"></script>'
+    return tag_template.format(source)

@@ -1,5 +1,6 @@
 from os.path import dirname
 
+from glimpse import log
 from glimpse.staticresource import StaticResource
 from glimpse.metadataresource import MetadataResource
 from glimpse.requestresource import RequestResource
@@ -13,7 +14,8 @@ def _resource(file_name):
 class Configuration(object):
     _script_sources = [
         'glimpse.js',
-        'metadata?callback=glimpse.data.initMetadata'
+        'metadata?callback=glimpse.data.initMetadata',
+        'request/{request_id}'
     ]
 
     def __init__(self):
@@ -41,10 +43,14 @@ class Configuration(object):
             resource=MetadataResource()
         )
 
-    def generate_script_tags(self):
+    def generate_script_tags(self, request_id):
+        log.debug('Generating script tags with request id %s', request_id)
         script_tag = '<script type="text/javascript" src="/glimpse/{0}"></script>'
-        tag_list = (script_tag.format(source) 
-                    for source in self._script_sources)
+        tag_list = []
+        for source in self._script_sources:
+            source_with_request_id = source.format(request_id=request_id)
+            tag_list.append(script_tag.format(source_with_request_id))
+
         return ''.join(tag_list)
 
 configuration = Configuration()

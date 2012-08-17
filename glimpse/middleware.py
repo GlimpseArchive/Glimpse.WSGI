@@ -18,8 +18,8 @@ class Middleware(object):
         else:
             return self._hook_into_application(environ, start_response)
 
-    def _filter_data(self, data):
-        body_with_script = configuration.generate_script_tags() + '</body>'
+    def _filter_data(self, data, request_id):
+        body_with_script = configuration.generate_script_tags(request_id) + '</body>'
         return data.replace('</body>', body_with_script)
 
     @staticmethod
@@ -27,24 +27,27 @@ class Middleware(object):
         request_id = uuid4().hex
         response_headers.append(('x-glimpse-requestid', request_id))
         request_store[request_id] = {}
+        return request_id
 
     def _hook_into_application(self, environ, start_response):
         log.info('Passing request to application')
+        request_id = [None]
         def start_glimpse_response(status, response_headers, exc_info=None):
-            self._track_request(response_headers)
+            request_id[0] = self._track_request(response_headers)
             lowered_headers = [(key.lower(), value.lower()) 
                                for key, value in response_headers]
             write = start_response(status, response_headers, exc_info)
 
             if ('content-type', 'text/html') in lowered_headers:
-                middleware_write = lambda data: write(self._filter_data(data))
+                def middleware_write(data):
+                    write(self._filter_data(data, request_id[0]))
             else:
                 middleware_write = write
 
             return middleware_write
         
         data = self._application(environ, start_glimpse_response)
-        return (self._filter_data(item) for item in data)
+        return (self._filter_data(item, request_id[0]) for item in data)
 
     def _execute_resource(self, environ, start_response):
         resource_url = environ['PATH_INFO'][len('/glimpse'):]
