@@ -7,6 +7,7 @@ from glimpse.middleware import Middleware
 from unit_test_decorator import test_with_resources
 from application_creation import create_application
 from wsgi_test_server import output_from_application
+from wsgi_test_server import output_and_id_from_application
 
 @istest
 def wsgi_test_environment_behaves_correctly():
@@ -17,8 +18,8 @@ def wsgi_test_environment_behaves_correctly():
 @istest
 def middleware_inserts_script_tags_in_returned_data():
     middleware = Middleware(create_application())
-    response = output_from_application(middleware)
-    script_tags = configuration.generate_script_tags('uuid')
+    response, request_id = output_and_id_from_application(middleware)
+    script_tags = configuration.generate_script_tags(request_id)
     expected = '<html><body>{0}</body></html>'.format(script_tags)
     assert_equal(expected, response)
 
