@@ -6,7 +6,7 @@ def _find_in_headers(header_name, headers):
             return value
 
 def output_from_application(application, request_path='/'):
-    return output_and_id_from_application(application, request_path='/')[0]
+    return output_and_id_from_application(application, request_path=request_path)[0]
 
 def output_and_id_from_application(application, request_path='/'):
     output = StringIO()
